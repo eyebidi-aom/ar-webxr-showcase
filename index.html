@@ -243,11 +243,11 @@
   <div id="startScreen">
     <div class="logo-orb">🪄</div>
     <h1>AR 3D Showcase</h1>
-    <p>ส่องกล้องมือถือไปที่พื้น แล้ววางโมเดล 3 มิติแบบอินเตอร์แอคทีฟ พร้อมแนบวิดีโอ กราฟ และสไลด์ประกอบได้ในฉากเดียว</p>
+    <p>สแกน/เปิดลิงก์แล้วส่องกล้องไปที่พื้น ระบบจะสร้าง "บูธเสมือนจริง" รอบตัวคุณให้ทันที มีโมเดล 3 มิติตรงกลาง พร้อมวิดีโอ กราฟ และสไลด์รอบๆ ที่แตะดูได้เลย</p>
     <button id="startArBtn" class="btn-primary">📷 เริ่มประสบการณ์ AR</button>
     <button id="fallbackBtn" class="btn-secondary">🧊 ดูตัวอย่าง 3 มิติ (ไม่ใช้กล้อง)</button>
     <button id="settingsBtn" class="btn-secondary">⚙️ ตั้งค่าวิดีโอ / กราฟ / สไลด์ / โมเดล</button>
-    <div id="arNote">ต้องใช้ Chrome บน Android ที่รองรับ WebXR และอนุญาตให้ใช้กล้อง</div>
+    <div id="arNote">ต้องใช้ Chrome บน Android ที่รองรับ WebXR และอนุญาตให้ใช้กล้อง — เจอพื้นปุ๊บ ระบบจะวางบูธให้อัตโนมัติ</div>
     <div class="badge-row">
       <div class="badge">A-Frame</div>
       <div class="badge">WebXR Hit-Test</div>
@@ -262,23 +262,17 @@
       <div id="exitBtn">✕</div>
     </div>
     <div id="toolbar">
-      <div id="placeBtn" class="tbtn primary" disabled>
-        <div class="icon">📍</div><div class="label">วางโมเดล</div>
+      <div id="moveBtn" class="tbtn primary" style="display:none;">
+        <div class="icon">🔄</div><div class="label">ย้ายบูธ</div>
       </div>
-      <div id="videoBtn" class="tbtn">
-        <div class="icon">🎥</div><div class="label">วิดีโอ</div>
-      </div>
-      <div id="chartBtn" class="tbtn">
-        <div class="icon">📊</div><div class="label">กราฟ</div>
-      </div>
-      <div id="slideBtn" class="tbtn">
-        <div class="icon">🖼️</div><div class="label">สไลด์</div>
+      <div id="videoPlayBtn" class="tbtn">
+        <div class="icon">▶️</div><div class="label">เล่นวิดีโอ</div>
       </div>
       <div id="slidePrevBtn" class="tbtn small">
-        <div class="icon">‹</div><div class="label">ก่อนหน้า</div>
+        <div class="icon">‹</div><div class="label">สไลด์ก่อนหน้า</div>
       </div>
       <div id="slideNextBtn" class="tbtn small">
-        <div class="icon">›</div><div class="label">ถัดไป</div>
+        <div class="icon">›</div><div class="label">สไลด์ถัดไป</div>
       </div>
       <div class="sep"></div>
       <div id="scaleDownBtn" class="tbtn small">
@@ -306,13 +300,13 @@
   <div id="settingsModal" class="modal-overlay">
     <div class="modal-panel">
       <div class="modal-header">
-        <h2>⚙️ ตั้งค่าเนื้อหา AR</h2>
+        <h2>⚙️ ตั้งค่าเนื้อหาบูธ AR</h2>
         <div id="closeSettingsBtn" class="icon-close">✕</div>
       </div>
       <div class="modal-body">
 
         <section class="settings-section">
-          <h3>🧊 โมเดล 3 มิติ</h3>
+          <h3>🧊 โมเดล 3 มิติ (ตรงกลางบูธ)</h3>
           <label class="field-label">ลิงก์ไฟล์ .glb (ต้องเป็นลิงก์ที่รองรับ CORS)</label>
           <input id="modelUrlInput" type="text" class="field" placeholder="https://.../model.glb">
           <label class="field-label">หรืออัปโหลดไฟล์จากเครื่อง</label>
@@ -323,7 +317,7 @@
         </section>
 
         <section class="settings-section">
-          <h3>🎥 วิดีโอ</h3>
+          <h3>🎥 บูธวิดีโอ (แตะที่จอเพื่อเล่น/หยุด)</h3>
           <label class="field-label">ลิงก์วิดีโอ (ต้องเป็นลิงก์ที่รองรับ CORS)</label>
           <input id="videoUrlInput" type="text" class="field" placeholder="https://.../video.mp4">
           <label class="field-label">หรืออัปโหลดไฟล์จากเครื่อง</label>
@@ -332,7 +326,7 @@
         </section>
 
         <section class="settings-section">
-          <h3>📊 กราฟ</h3>
+          <h3>📊 บูธกราฟ</h3>
           <label class="field-label">ชื่อกราฟ</label>
           <input id="chartTitleInput" type="text" class="field">
           <div id="chartRowsContainer" class="rows-container"></div>
@@ -340,7 +334,7 @@
         </section>
 
         <section class="settings-section">
-          <h3>🖼️ สไลด์</h3>
+          <h3>🖼️ บูธสไลด์ (แตะที่จอเพื่อเลื่อนหน้า)</h3>
           <div id="slideListContainer" class="slide-list"></div>
           <label class="field-label">เพิ่มรูปภาพ (เลือกได้หลายรูปพร้อมกัน)</label>
           <input id="slideImagesInput" type="file" accept="image/*" multiple class="field-file">
@@ -379,37 +373,57 @@
       visible="false">
     </a-entity>
 
-    <!-- placed content -->
-    <a-entity id="modelWrapper" visible="false" drag-rotate-scale>
+    <!-- ===== the whole booth exhibition (auto-placed as one group) ===== -->
+    <a-entity id="boothRoot" visible="false" drag-rotate-scale>
+
+      <!-- decorative floor ring connecting the booths -->
+      <a-entity geometry="primitive: ring; radiusInner: 0.95; radiusOuter: 1.25; segmentsTheta: 64"
+        material="color:#00CEC9; shader:flat; opacity:0.16; side:double"
+        rotation="-90 0 0" position="0 0.005 0"></a-entity>
+
+      <!-- center pedestal + model -->
+      <a-entity geometry="primitive: ring; radiusInner: 0.24; radiusOuter: 0.3; segmentsTheta: 48"
+        material="color:#6C5CE7; shader:flat; opacity:0.55" rotation="-90 0 0" position="0 0.01 0"></a-entity>
       <a-entity id="modelEl"
         animation="property: position; dir: alternate; dur: 2200; easing: easeInOutSine; loop: true; to: 0 0.06 0">
       </a-entity>
 
-      <a-entity id="videoPanel" visible="false" position="0.55 0.55 0">
-        <a-video id="videoPlane" src="#demoVideo" width="0.7" height="0.394" material="shader:flat; side:double"></a-video>
-        <a-plane position="0 0 -0.01" width="0.74" height="0.434" color="#000" opacity="0.6"></a-plane>
+      <!-- ===== video booth (angle 0deg — directly ahead) ===== -->
+      <a-entity id="videoBooth" position="0 0 -1.1" rotation="0 0 0">
+        <a-entity position="0 0.42 0" text="value: 🎥 วิดีโอ; align: center; color:#FFFFFF; width: 2.2; baseline: bottom"></a-entity>
+        <a-plane position="0 0 -0.015" width="0.78" height="0.46" color="#141422" opacity="0.85"></a-plane>
+        <a-video id="videoBoothPlane" class="clickable" src="#demoVideo" width="0.74" height="0.416" material="shader:flat; side:double"></a-video>
+        <a-entity id="videoPlayIcon" position="0.3 -0.16 0.001" text="value: ▶; align: center; color:#FFFFFF; width: 3"></a-entity>
       </a-entity>
 
-      <a-entity id="chartPanel" visible="false" position="-0.6 0.55 0">
-        <a-plane id="chartPlane" width="0.55" height="0.55" material="shader:flat; side:double" color="#161625"></a-plane>
+      <!-- ===== chart booth (angle 120deg) ===== -->
+      <a-entity id="chartBooth" position="0.9526 0 0.55" rotation="0 -120 0">
+        <a-entity position="0 0.42 0" text="value: 📊 กราฟ; align: center; color:#FFFFFF; width: 2.2; baseline: bottom"></a-entity>
+        <a-plane position="0 0 -0.015" width="0.6" height="0.6" color="#141422" opacity="0.85"></a-plane>
+        <a-plane id="chartBoothPlane" width="0.56" height="0.56" material="shader:flat; side:double" color="#161625"></a-plane>
       </a-entity>
 
-      <a-entity id="slidePanel" visible="false" position="0 1.05 0">
-        <a-plane id="slidePlane" width="0.85" height="0.478" material="shader:flat; side:double" color="#161625"></a-plane>
+      <!-- ===== slide booth (angle 240deg) ===== -->
+      <a-entity id="slideBooth" position="-0.9526 0 0.55" rotation="0 -240 0">
+        <a-entity position="0 0.42 0" text="value: 🖼️ สไลด์; align: center; color:#FFFFFF; width: 2.2; baseline: bottom"></a-entity>
+        <a-plane position="0 0 -0.015" width="0.92" height="0.53" color="#141422" opacity="0.85"></a-plane>
+        <a-plane id="slideBoothPlane" class="clickable" width="0.88" height="0.49" material="shader:flat; side:double" color="#161625"></a-plane>
       </a-entity>
+
     </a-entity>
 
     <a-entity light="type:ambient; intensity:0.9; color:#fff"></a-entity>
     <a-entity light="type:directional; intensity:0.7; color:#fff" position="1 3 1"></a-entity>
 
-    <a-entity id="camera" camera position="0 1.4 0.6" look-controls="enabled:false"></a-entity>
+    <a-entity id="camera" camera position="0 1.4 0.6" look-controls="enabled:false"
+      raycaster="objects: .clickable; far: 15" cursor="fuse: false"></a-entity>
   </a-scene>
 
 <script>
 (function(){
   "use strict";
 
-  /* ---------------- drag-rotate-scale component ---------------- */
+  /* ---------------- drag-rotate-scale component (whole booth: pinch to scale, drag to rotate) ---------------- */
   AFRAME.registerComponent('drag-rotate-scale', {
     init: function () {
       this.rotY = 0;
@@ -426,11 +440,6 @@
         c.addEventListener('touchstart', self.onTouchStart.bind(self), {passive:true});
         c.addEventListener('touchmove', self.onTouchMove.bind(self), {passive:false});
         c.addEventListener('touchend', self.onTouchEnd.bind(self), {passive:true});
-        c.addEventListener('mousedown', function(e){ self.dragging = true; self.lastX = e.clientX; });
-        window.addEventListener('mousemove', function(e){
-          if (self.dragging) { var dx = e.clientX - self.lastX; self.lastX = e.clientX; self.applyRotate(dx); }
-        });
-        window.addEventListener('mouseup', function(){ self.dragging = false; });
       });
     },
     getDist: function (t) {
@@ -438,39 +447,27 @@
       return Math.sqrt(dx*dx + dy*dy);
     },
     onTouchStart: function (e) {
-      if (e.touches.length === 1) {
-        this.dragging = true;
-        this.lastX = e.touches[0].clientX;
-      } else if (e.touches.length === 2) {
-        this.dragging = false;
+      if (e.touches.length === 2) {
         this.pinchDist = this.getDist(e.touches);
         this.pinchScale = this.scaleVal;
       }
     },
     onTouchMove: function (e) {
-      if (e.touches.length === 1 && this.dragging) {
-        var dx = e.touches[0].clientX - this.lastX;
-        this.lastX = e.touches[0].clientX;
-        this.applyRotate(dx);
-      } else if (e.touches.length === 2 && this.pinchDist) {
+      if (e.touches.length === 2 && this.pinchDist) {
         e.preventDefault();
         var d = this.getDist(e.touches);
         this.setScale(this.pinchScale * (d / this.pinchDist));
       }
     },
     onTouchEnd: function (e) {
-      if (e.touches.length === 0) { this.dragging = false; this.pinchDist = null; }
-    },
-    applyRotate: function (dx) {
-      this.rotY += dx * 0.5;
-      this.el.object3D.rotation.y = THREE.MathUtils.degToRad(this.rotY);
+      if (e.touches.length === 0) { this.pinchDist = null; }
     },
     rotateBy: function (deg) {
       this.rotY += deg;
       this.el.object3D.rotation.y = THREE.MathUtils.degToRad(this.rotY);
     },
     setScale: function (s) {
-      s = Math.min(Math.max(s, 0.2), 3);
+      s = Math.min(Math.max(s, 0.3), 2.5);
       this.scaleVal = s;
       this.el.object3D.scale.set(s, s, s);
     },
@@ -492,10 +489,8 @@
   var arNote            = document.getElementById('arNote');
   var exitBtn           = document.getElementById('exitBtn');
   var statusPill      = document.getElementById('statusPill');
-  var placeBtn         = document.getElementById('placeBtn');
-  var videoBtn          = document.getElementById('videoBtn');
-  var chartBtn          = document.getElementById('chartBtn');
-  var slideBtn          = document.getElementById('slideBtn');
+  var moveBtn           = document.getElementById('moveBtn');
+  var videoPlayBtn    = document.getElementById('videoPlayBtn');
   var slidePrevBtn    = document.getElementById('slidePrevBtn');
   var slideNextBtn    = document.getElementById('slideNextBtn');
   var scaleUpBtn      = document.getElementById('scaleUpBtn');
@@ -506,19 +501,20 @@
   var loadingHint      = document.getElementById('loadingHint');
 
   var reticle       = document.getElementById('reticle');
-  var modelWrapper = document.getElementById('modelWrapper');
-  var modelEl        = document.getElementById('modelEl');
-  var videoPanel     = document.getElementById('videoPanel');
-  var chartPanel     = document.getElementById('chartPanel');
-  var slidePanel     = document.getElementById('slidePanel');
+  var boothRoot      = document.getElementById('boothRoot');
+  var modelEl         = document.getElementById('modelEl');
   var demoVideo       = document.getElementById('demoVideo');
+  var videoBoothPlane = document.getElementById('videoBoothPlane');
+  var videoPlayIcon   = document.getElementById('videoPlayIcon');
+  var slideBoothPlane = document.getElementById('slideBoothPlane');
 
   var inAR = false;
   var isFallback = false;
   var modelPlaced = false;
   var reticleFound = false;
+  var videoPlaying = false;
 
-  function wrapperComp(){ return modelWrapper.components['drag-rotate-scale']; }
+  function wrapperComp(){ return boothRoot.components['drag-rotate-scale']; }
 
   /* ---------------- Settings modal refs ---------------- */
   var settingsModal        = document.getElementById('settingsModal');
@@ -540,7 +536,7 @@
   var saveSettingsBtn      = document.getElementById('saveSettingsBtn');
   var toastEl                = document.getElementById('toast');
 
-  var STORAGE_KEY = 'arShowcaseSettings_v1';
+  var STORAGE_KEY = 'arShowcaseSettings_v2';
 
   var DEFAULT_STATE = {
     modelUrl: 'https://modelviewer.dev/shared-assets/models/Astronaut.glb',
@@ -582,6 +578,8 @@
     try { demoVideo.pause(); } catch(e){}
     demoVideo.src = url;
     demoVideo.load();
+    videoPlaying = false;
+    updateVideoIcon();
   }
 
   var chartInstance = null;
@@ -617,7 +615,7 @@
       }
     });
     requestAnimationFrame(function(){
-      var plane = document.getElementById('chartPlane');
+      var plane = document.getElementById('chartBoothPlane');
       plane.setAttribute('material', 'src', '#chartCanvas');
       if (plane.components.material && plane.components.material.material.map) {
         plane.components.material.material.map.needsUpdate = true;
@@ -627,7 +625,7 @@
 
   function drawSlide(i){
     var s = appState.slides[i];
-    var plane = document.getElementById('slidePlane');
+    var plane = slideBoothPlane;
     if (!s) return;
     if (s.type === 'image') {
       plane.setAttribute('material', 'src', s.url);
@@ -654,117 +652,109 @@
     }
   }
 
-  /* ---------------- Toggle helpers ---------------- */
-  function setPanelVisible(panelEl, btnEl, visible){
-    panelEl.setAttribute('visible', visible);
-    btnEl.classList.toggle('active', visible);
+  /* ---------------- Booth interactions: tap-on-object (AR-safe via raycaster+cursor) ---------------- */
+  function updateVideoIcon(){
+    videoPlayIcon.setAttribute('text', 'value', videoPlaying ? '⏸' : '▶');
+    videoPlayBtn.querySelector('.icon').textContent = videoPlaying ? '⏸️' : '▶️';
+    videoPlayBtn.querySelector('.label').textContent = videoPlaying ? 'หยุดวิดีโอ' : 'เล่นวิดีโอ';
   }
-
-  videoBtn.addEventListener('click', function(){
-    var showing = videoPanel.getAttribute('visible');
-    if (!showing) {
-      setPanelVisible(videoPanel, videoBtn, true);
-      demoVideo.currentTime = 0;
-      demoVideo.play().catch(function(){});
-    } else {
-      setPanelVisible(videoPanel, videoBtn, false);
+  function toggleVideoPlay(){
+    if (videoPlaying) {
       demoVideo.pause();
+      videoPlaying = false;
+    } else {
+      demoVideo.currentTime = demoVideo.ended ? 0 : demoVideo.currentTime;
+      demoVideo.play().catch(function(){});
+      videoPlaying = true;
     }
-  });
-
-  chartBtn.addEventListener('click', function(){
-    var showing = chartPanel.getAttribute('visible');
-    setPanelVisible(chartPanel, chartBtn, !showing);
-  });
-
-  slideBtn.addEventListener('click', function(){
+    updateVideoIcon();
+  }
+  function nextSlideAction(){
     if (!appState.slides.length) { showToast('ยังไม่มีสไลด์ — เพิ่มได้ในหน้าตั้งค่า ⚙️'); return; }
-    var showing = slidePanel.getAttribute('visible');
-    if (!showing) { drawSlide(slideIndex); }
-    setPanelVisible(slidePanel, slideBtn, !showing);
-  });
-  slidePrevBtn.addEventListener('click', function(){
+    slideIndex = (slideIndex + 1) % appState.slides.length;
+    drawSlide(slideIndex);
+  }
+  function prevSlideAction(){
     if (!appState.slides.length) return;
     slideIndex = (slideIndex - 1 + appState.slides.length) % appState.slides.length;
     drawSlide(slideIndex);
-    setPanelVisible(slidePanel, slideBtn, true);
-  });
-  slideNextBtn.addEventListener('click', function(){
-    if (!appState.slides.length) return;
-    slideIndex = (slideIndex + 1) % appState.slides.length;
-    drawSlide(slideIndex);
-    setPanelVisible(slidePanel, slideBtn, true);
-  });
+  }
+
+  videoBoothPlane.addEventListener('click', toggleVideoPlay);
+  slideBoothPlane.addEventListener('click', nextSlideAction);
+
+  videoPlayBtn.addEventListener('click', toggleVideoPlay);
+  slidePrevBtn.addEventListener('click', prevSlideAction);
+  slideNextBtn.addEventListener('click', nextSlideAction);
 
   scaleUpBtn.addEventListener('click', function(){ wrapperComp() && wrapperComp().scaleBy(1.15); });
   scaleDownBtn.addEventListener('click', function(){ wrapperComp() && wrapperComp().scaleBy(0.87); });
   rotateLeftBtn.addEventListener('click', function(){ wrapperComp() && wrapperComp().rotateBy(-15); });
   rotateRightBtn.addEventListener('click', function(){ wrapperComp() && wrapperComp().rotateBy(15); });
 
-  function updatePlaceBtn(placed){
-    placeBtn.querySelector('.icon').textContent = placed ? '🗑️' : '📍';
-    placeBtn.querySelector('.label').textContent = placed ? 'ลบโมเดล' : 'วางโมเดล';
+  /* ---------------- Placement (auto-place the whole booth on first floor hit) ---------------- */
+  function placeBooth(){
+    if (inAR) {
+      var pos = new THREE.Vector3();
+      reticle.object3D.getWorldPosition(pos);
+      boothRoot.object3D.position.copy(pos);
+      reticle.removeAttribute('ar-hit-test');
+      reticle.setAttribute('visible', false);
+    }
+    boothRoot.setAttribute('visible', true);
+    modelPlaced = true;
+    moveBtn.style.display = '';
+    statusPill.textContent = '🎉 วางบูธเรียบร้อย! เดินสำรวจรอบๆ แล้วแตะที่วิดีโอ/สไลด์เพื่อโต้ตอบได้เลย';
   }
 
-  placeBtn.addEventListener('click', function(){
-    if (placeBtn.disabled) return;
-    if (!modelPlaced) {
-      if (inAR) {
-        var pos = new THREE.Vector3();
-        var quat = new THREE.Quaternion();
-        reticle.object3D.getWorldPosition(pos);
-        reticle.object3D.getWorldQuaternion(quat);
-        modelWrapper.object3D.position.copy(pos);
-        reticle.removeAttribute('ar-hit-test');
-        reticle.setAttribute('visible', false);
-      }
-      modelWrapper.setAttribute('visible', true);
-      modelPlaced = true;
-      updatePlaceBtn(true);
-      statusPill.textContent = '🎉 วางโมเดลแล้ว ลากเพื่อหมุน / บีบเพื่อซูมได้เลย';
-    } else {
-      modelWrapper.setAttribute('visible', false);
-      modelPlaced = false;
-      updatePlaceBtn(false);
-      if (inAR) {
-        reticle.setAttribute('ar-hit-test', 'target:#reticle');
-        statusPill.textContent = '🔍 กำลังค้นหาพื้น...';
-      }
-    }
-  });
-
-  resetBtn.addEventListener('click', function(){
-    modelWrapper.setAttribute('visible', false);
-    setPanelVisible(videoPanel, videoBtn, false);
-    setPanelVisible(chartPanel, chartBtn, false);
-    setPanelVisible(slidePanel, slideBtn, false);
-    demoVideo.pause();
-    var comp = wrapperComp();
-    if (comp) comp.resetTransform();
+  function unplaceBooth(){
+    boothRoot.setAttribute('visible', false);
     modelPlaced = false;
-    updatePlaceBtn(false);
+    moveBtn.style.display = 'none';
     if (inAR) {
       reticle.setAttribute('ar-hit-test', 'target:#reticle');
       statusPill.textContent = '🔍 กำลังค้นหาพื้น...';
-    } else if (isFallback) {
-      modelWrapper.object3D.position.set(0, 0, -1.6);
-      modelWrapper.setAttribute('visible', true);
+    }
+  }
+
+  moveBtn.addEventListener('click', function(){
+    if (isFallback) {
+      boothRoot.object3D.position.set(0, 0, -1.4);
+      showToast('🔄 ย้ายบูธกลับตำแหน่งกลางแล้ว');
+      return;
+    }
+    unplaceBooth();
+  });
+
+  resetBtn.addEventListener('click', function(){
+    demoVideo.pause();
+    videoPlaying = false;
+    updateVideoIcon();
+    slideIndex = 0;
+    if (appState.slides.length) drawSlide(0);
+    var comp = wrapperComp();
+    if (comp) comp.resetTransform();
+    if (isFallback) {
+      boothRoot.object3D.position.set(0, 0, -1.4);
+      boothRoot.setAttribute('visible', true);
       modelPlaced = true;
-      updatePlaceBtn(true);
-      statusPill.textContent = '👋 โหมดพรีวิว 3 มิติ — ลากเพื่อหมุน / บีบเพื่อซูม';
+      statusPill.textContent = '👋 โหมดพรีวิว 3 มิติ — ลากเพื่อหมุน / บีบเพื่อซูม / แตะวิดีโอ-สไลด์เพื่อโต้ตอบ';
+    } else {
+      unplaceBooth();
     }
   });
 
-  /* ---------------- Reticle polling loop (AR mode only) ---------------- */
+  /* ---------------- Reticle polling loop (AR mode only) — auto-place on first find ---------------- */
   function reticleLoop(){
     if (inAR && !modelPlaced) {
       var found = !!reticle.object3D.visible;
       if (found !== reticleFound) {
         reticleFound = found;
-        placeBtn.disabled = !found;
-        statusPill.textContent = found
-          ? '✅ พบพื้นแล้ว แตะปุ่ม 📍 เพื่อวาง'
-          : '🔍 กำลังค้นหาพื้น เลื่อนกล้องช้าๆ...';
+        if (found) {
+          placeBooth();
+        } else {
+          statusPill.textContent = '🔍 กำลังค้นหาพื้น เลื่อนกล้องช้าๆ...';
+        }
       }
     }
     requestAnimationFrame(reticleLoop);
@@ -783,7 +773,7 @@
 
   startArBtn.addEventListener('click', function(){
     openOverlay();
-    placeBtn.style.display = '';
+    moveBtn.style.display = 'none';
     statusPill.textContent = '🔍 กำลังค้นหาพื้น...';
     sceneEl.enterVR(true);
   });
@@ -797,23 +787,32 @@
   sceneEl.addEventListener('exit-vr', function(){
     if (inAR) {
       inAR = false;
-      resetBtn.click();
+      unplaceBooth();
+      demoVideo.pause(); videoPlaying = false; updateVideoIcon();
+      var comp = wrapperComp(); if (comp) comp.resetTransform();
       closeOverlay();
     }
   });
   exitBtn.addEventListener('click', function(){
     if (inAR) { sceneEl.exitVR(); }
-    else { isFallback = false; resetBtn.click(); closeOverlay(); }
+    else {
+      isFallback = false;
+      boothRoot.setAttribute('visible', false);
+      modelPlaced = false;
+      demoVideo.pause(); videoPlaying = false; updateVideoIcon();
+      var comp = wrapperComp(); if (comp) comp.resetTransform();
+      closeOverlay();
+    }
   });
 
   fallbackBtn.addEventListener('click', function(){
     isFallback = true;
     inAR = false;
     openOverlay();
-    placeBtn.style.display = 'none';
-    statusPill.textContent = '👋 โหมดพรีวิว 3 มิติ — ลากเพื่อหมุน / บีบเพื่อซูม';
-    modelWrapper.object3D.position.set(0, 0, -1.6);
-    modelWrapper.setAttribute('visible', true);
+    moveBtn.style.display = '';
+    statusPill.textContent = '👋 โหมดพรีวิว 3 มิติ — ลากเพื่อหมุน / บีบเพื่อซูม / แตะวิดีโอ-สไลด์เพื่อโต้ตอบ';
+    boothRoot.object3D.position.set(0, 0, -1.4);
+    boothRoot.setAttribute('visible', true);
     modelPlaced = true;
   });
 
@@ -1009,7 +1008,7 @@
       await persistState(newState);
 
       closeSettings();
-      showToast('✅ บันทึกและใช้งานแล้ว');
+      showToast('✅ บันทึกและใช้งานแล้ว — ลองเปิดโหมด AR หรือพรีวิวเพื่อดูบูธที่อัปเดตได้เลย');
     } catch (e) {
       showToast('⚠️ เกิดข้อผิดพลาด: ' + e.message);
     } finally {

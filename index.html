@@ -37,6 +37,7 @@
     position:fixed; inset:0; z-index:50;
     display:flex; flex-direction:column; align-items:center; justify-content:center;
     text-align:center; padding:32px 24px;
+    overflow-y:auto;
     background:
       radial-gradient(circle at 20% 20%, rgba(108,92,231,0.35), transparent 55%),
       radial-gradient(circle at 80% 80%, rgba(0,206,201,0.30), transparent 55%),
@@ -48,6 +49,7 @@
     box-shadow:0 0 40px rgba(108,92,231,0.55), 0 0 80px rgba(0,206,201,0.25);
     display:flex;align-items:center;justify-content:center;font-size:38px;
     animation:float 3s ease-in-out infinite;
+    flex:0 0 auto;
   }
   @keyframes float{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
   #startScreen h1{
@@ -158,6 +160,76 @@
     animation:spin 0.9s linear infinite; margin:0 auto 12px;
   }
   @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  /* ---------- Settings modal ---------- */
+  .modal-overlay{
+    position:fixed; inset:0; z-index:60; display:none;
+    align-items:flex-end; justify-content:center;
+    background:rgba(0,0,0,0.6); backdrop-filter:blur(4px);
+  }
+  .modal-panel{
+    width:100%; max-width:480px; max-height:88vh;
+    background:#141422; border-top-left-radius:24px; border-top-right-radius:24px;
+    border:1px solid rgba(255,255,255,0.12); border-bottom:none;
+    display:flex; flex-direction:column; overflow:hidden;
+    box-shadow:0 -10px 40px rgba(0,0,0,0.5);
+  }
+  .modal-header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 20px; border-bottom:1px solid rgba(255,255,255,0.08); flex:0 0 auto;
+  }
+  .modal-header h2{ color:#fff; font-size:17px; margin:0; font-weight:600; }
+  .icon-close{
+    width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.08);
+    display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;flex:0 0 auto;
+  }
+  .modal-body{ padding:18px 20px; overflow-y:auto; flex:1; }
+  .settings-section{ margin-bottom:26px; }
+  .settings-section h3{ color:#fff; font-size:15px; margin:0 0 4px; font-weight:600; }
+  .field-label{ display:block; color:rgba(255,255,255,0.6); font-size:12px; margin:10px 0 6px; font-weight:300; }
+  .field{
+    width:100%; padding:11px 14px; border-radius:12px; border:1px solid rgba(255,255,255,0.15);
+    background:rgba(255,255,255,0.05); color:#fff; font-family:'Kanit',sans-serif; font-size:14px;
+  }
+  .field.small{ width:auto; flex:1; }
+  .field-file{
+    width:100%; color:rgba(255,255,255,0.7); font-size:12.5px; font-family:'Kanit',sans-serif;
+  }
+  .hint{ color:rgba(255,255,255,0.4); font-size:11.5px; line-height:1.6; margin-top:8px; font-weight:300; }
+  .rows-container{ display:flex; flex-direction:column; gap:8px; margin-top:6px; }
+  .form-row{ display:flex; gap:8px; align-items:center; }
+  .chip-del{
+    width:34px;height:34px;flex:0 0 auto;border-radius:10px;border:1px solid rgba(255,94,94,0.3);
+    background:rgba(255,94,94,0.12); color:#ff8080; cursor:pointer; font-size:14px;
+  }
+  .chip-del.small{ width:22px;height:22px;border-radius:7px;font-size:10px; position:absolute; top:4px; right:4px; padding:0; }
+  .btn-chip{
+    margin-top:10px; padding:10px 18px; border-radius:999px; border:1px dashed rgba(255,255,255,0.25);
+    background:transparent; color:rgba(255,255,255,0.75); font-family:'Kanit',sans-serif; font-size:13px; cursor:pointer;
+  }
+  .slide-list{ display:flex; flex-wrap:wrap; gap:10px; margin-bottom:4px; }
+  .slide-card{
+    position:relative; width:84px; height:64px; border-radius:10px; overflow:hidden;
+    border:1px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.05); flex:0 0 auto;
+  }
+  .slide-card img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .slide-card-text{
+    width:100%; height:100%; display:flex; align-items:center; justify-content:center;
+    color:#fff; font-size:11px; text-align:center; padding:4px; font-weight:500;
+  }
+  .modal-footer{
+    display:flex; gap:10px; padding:16px 20px calc(env(safe-area-inset-bottom,0px) + 16px) 20px;
+    border-top:1px solid rgba(255,255,255,0.08); flex:0 0 auto;
+  }
+  .modal-footer .btn-primary, .modal-footer .btn-secondary{ width:auto; flex:1; margin:0; padding:13px; font-size:14px; }
+
+  #toast{
+    position:fixed; left:50%; bottom:30px; transform:translateX(-50%) translateY(20px);
+    background:rgba(20,20,34,0.97); color:#fff; padding:12px 22px; border-radius:999px;
+    font-size:13.5px; border:1px solid rgba(255,255,255,0.15); z-index:80;
+    opacity:0; pointer-events:none; transition:all .25s ease; max-width:86%; text-align:center;
+  }
+  #toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
@@ -165,8 +237,7 @@
   <!-- offscreen canvases used as AR textures -->
   <canvas id="chartCanvas" width="640" height="640" style="display:none;"></canvas>
   <canvas id="slideCanvas" width="800" height="450" style="display:none;"></canvas>
-  <video id="demoVideo" src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"
-    crossorigin="anonymous" loop playsinline muted="false" style="display:none;"></video>
+  <video id="demoVideo" crossorigin="anonymous" loop playsinline muted="false" style="display:none;"></video>
 
   <!-- ============ Start screen ============ -->
   <div id="startScreen">
@@ -175,6 +246,7 @@
     <p>ส่องกล้องมือถือไปที่พื้น แล้ววางโมเดล 3 มิติแบบอินเตอร์แอคทีฟ พร้อมแนบวิดีโอ กราฟ และสไลด์ประกอบได้ในฉากเดียว</p>
     <button id="startArBtn" class="btn-primary">📷 เริ่มประสบการณ์ AR</button>
     <button id="fallbackBtn" class="btn-secondary">🧊 ดูตัวอย่าง 3 มิติ (ไม่ใช้กล้อง)</button>
+    <button id="settingsBtn" class="btn-secondary">⚙️ ตั้งค่าวิดีโอ / กราฟ / สไลด์ / โมเดล</button>
     <div id="arNote">ต้องใช้ Chrome บน Android ที่รองรับ WebXR และอนุญาตให้ใช้กล้อง</div>
     <div class="badge-row">
       <div class="badge">A-Frame</div>
@@ -230,6 +302,64 @@
 
   <div id="loadingHint"><div class="spinner"></div>กำลังโหลดโมเดล...</div>
 
+  <!-- ============ Settings modal (edit video / chart / slides / model from the front end) ============ -->
+  <div id="settingsModal" class="modal-overlay">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h2>⚙️ ตั้งค่าเนื้อหา AR</h2>
+        <div id="closeSettingsBtn" class="icon-close">✕</div>
+      </div>
+      <div class="modal-body">
+
+        <section class="settings-section">
+          <h3>🧊 โมเดล 3 มิติ</h3>
+          <label class="field-label">ลิงก์ไฟล์ .glb (ต้องเป็นลิงก์ที่รองรับ CORS)</label>
+          <input id="modelUrlInput" type="text" class="field" placeholder="https://.../model.glb">
+          <label class="field-label">หรืออัปโหลดไฟล์จากเครื่อง</label>
+          <input id="modelFileInput" type="file" accept=".glb,.gltf" class="field-file">
+          <label class="field-label">ขนาดเริ่มต้น (scale)</label>
+          <input id="modelScaleInput" type="number" step="0.01" min="0.01" class="field small">
+          <p class="hint">ไฟล์ที่อัปโหลดจากเครื่องจะใช้ได้เฉพาะตอนนี้เท่านั้น (ปิด/รีเฟรชหน้าเว็บแล้วต้องอัปโหลดใหม่) ส่วนลิงก์ URL จะถูกจดจำไว้ในเครื่องนี้ให้อัตโนมัติสำหรับครั้งถัดไป</p>
+        </section>
+
+        <section class="settings-section">
+          <h3>🎥 วิดีโอ</h3>
+          <label class="field-label">ลิงก์วิดีโอ (ต้องเป็นลิงก์ที่รองรับ CORS)</label>
+          <input id="videoUrlInput" type="text" class="field" placeholder="https://.../video.mp4">
+          <label class="field-label">หรืออัปโหลดไฟล์จากเครื่อง</label>
+          <input id="videoFileInput" type="file" accept="video/*" class="field-file">
+          <p class="hint">ไฟล์ที่อัปโหลดจากเครื่องใช้ได้เฉพาะตอนนี้ ไฟล์ขนาดเล็กจะถูกจดจำไว้อัตโนมัติ ไฟล์ใหญ่เกินไปจะไม่ถูกบันทึกไว้ใช้ครั้งถัดไป</p>
+        </section>
+
+        <section class="settings-section">
+          <h3>📊 กราฟ</h3>
+          <label class="field-label">ชื่อกราฟ</label>
+          <input id="chartTitleInput" type="text" class="field">
+          <div id="chartRowsContainer" class="rows-container"></div>
+          <button id="addChartRowBtn" type="button" class="btn-chip">+ เพิ่มแท่งกราฟ</button>
+        </section>
+
+        <section class="settings-section">
+          <h3>🖼️ สไลด์</h3>
+          <div id="slideListContainer" class="slide-list"></div>
+          <label class="field-label">เพิ่มรูปภาพ (เลือกได้หลายรูปพร้อมกัน)</label>
+          <input id="slideImagesInput" type="file" accept="image/*" multiple class="field-file">
+          <label class="field-label">หรือเพิ่มสไลด์ข้อความ</label>
+          <input id="newSlideTitleInput" type="text" class="field" placeholder="หัวข้อสไลด์" style="margin-bottom:8px;">
+          <input id="newSlideSubtitleInput" type="text" class="field" placeholder="คำอธิบายย่อย (ไม่บังคับ)">
+          <button id="addTextSlideBtn" type="button" class="btn-chip">+ เพิ่มสไลด์ข้อความ</button>
+        </section>
+
+      </div>
+      <div class="modal-footer">
+        <button id="resetSettingsBtn" class="btn-secondary">↩️ รีเซ็ตค่าเริ่มต้น</button>
+        <button id="saveSettingsBtn" class="btn-primary">💾 บันทึกและใช้งาน</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
   <!-- ============ A-Frame scene ============ -->
   <a-scene
     webxr="optionalFeatures: hit-test, dom-overlay, local-floor; overlayElement: #overlay;"
@@ -238,9 +368,7 @@
     loading-screen="enabled: false"
     embedded>
 
-    <a-assets timeout="20000">
-      <a-asset-item id="demoModel" src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"></a-asset-item>
-    </a-assets>
+    <a-assets timeout="20000"></a-assets>
 
     <!-- floor reticle driven by WebXR hit-test -->
     <a-entity id="reticle"
@@ -254,8 +382,6 @@
     <!-- placed content -->
     <a-entity id="modelWrapper" visible="false" drag-rotate-scale>
       <a-entity id="modelEl"
-        gltf-model="#demoModel"
-        scale="0.28 0.28 0.28"
         animation="property: position; dir: alternate; dur: 2200; easing: easeInOutSine; loop: true; to: 0 0.06 0">
       </a-entity>
 
@@ -362,6 +488,7 @@
   var overlay          = document.getElementById('overlay');
   var startArBtn      = document.getElementById('startArBtn');
   var fallbackBtn      = document.getElementById('fallbackBtn');
+  var settingsBtn      = document.getElementById('settingsBtn');
   var arNote            = document.getElementById('arNote');
   var exitBtn           = document.getElementById('exitBtn');
   var statusPill      = document.getElementById('statusPill');
@@ -380,6 +507,7 @@
 
   var reticle       = document.getElementById('reticle');
   var modelWrapper = document.getElementById('modelWrapper');
+  var modelEl        = document.getElementById('modelEl');
   var videoPanel     = document.getElementById('videoPanel');
   var chartPanel     = document.getElementById('chartPanel');
   var slidePanel     = document.getElementById('slidePanel');
@@ -392,33 +520,95 @@
 
   function wrapperComp(){ return modelWrapper.components['drag-rotate-scale']; }
 
-  /* ---------------- Chart (attach a graph) ---------------- */
-  function buildChart(){
-    var ctx = document.getElementById('chartCanvas').getContext('2d');
-    Chart.register({
-      id: 'bgFill',
-      beforeDraw: function (chart) {
-        var c = chart.ctx, w = chart.width, h = chart.height;
-        c.save(); c.fillStyle = '#161625'; c.fillRect(0,0,w,h); c.restore();
-      }
-    });
-    new Chart(ctx, {
+  /* ---------------- Settings modal refs ---------------- */
+  var settingsModal        = document.getElementById('settingsModal');
+  var closeSettingsBtn    = document.getElementById('closeSettingsBtn');
+  var modelUrlInput         = document.getElementById('modelUrlInput');
+  var modelFileInput        = document.getElementById('modelFileInput');
+  var modelScaleInput      = document.getElementById('modelScaleInput');
+  var videoUrlInput         = document.getElementById('videoUrlInput');
+  var videoFileInput        = document.getElementById('videoFileInput');
+  var chartTitleInput       = document.getElementById('chartTitleInput');
+  var chartRowsContainer  = document.getElementById('chartRowsContainer');
+  var addChartRowBtn       = document.getElementById('addChartRowBtn');
+  var slideListContainer  = document.getElementById('slideListContainer');
+  var slideImagesInput     = document.getElementById('slideImagesInput');
+  var newSlideTitleInput    = document.getElementById('newSlideTitleInput');
+  var newSlideSubtitleInput = document.getElementById('newSlideSubtitleInput');
+  var addTextSlideBtn       = document.getElementById('addTextSlideBtn');
+  var resetSettingsBtn     = document.getElementById('resetSettingsBtn');
+  var saveSettingsBtn      = document.getElementById('saveSettingsBtn');
+  var toastEl                = document.getElementById('toast');
+
+  var STORAGE_KEY = 'arShowcaseSettings_v1';
+
+  var DEFAULT_STATE = {
+    modelUrl: 'https://modelviewer.dev/shared-assets/models/Astronaut.glb',
+    modelScale: 0.28,
+    videoUrl: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
+    chartTitle: 'ตัวอย่างกราฟยอดขาย',
+    chartData: [
+      { label:'Q1', value:12 },
+      { label:'Q2', value:19 },
+      { label:'Q3', value:14 },
+      { label:'Q4', value:27 }
+    ],
+    slides: [
+      { type:'text', title:'สไลด์ 1', subtitle:'ภาพรวมโครงการ AR', colors:['#6C5CE7','#00CEC9'] },
+      { type:'text', title:'สไลด์ 2', subtitle:'จุดเด่นและฟีเจอร์', colors:['#00B894','#0984E3'] },
+      { type:'text', title:'สไลด์ 3', subtitle:'ขอบคุณที่รับชม', colors:['#E17055','#D63031'] }
+    ]
+  };
+
+  function cloneState(s){ return JSON.parse(JSON.stringify(s)); }
+  var appState = cloneState(DEFAULT_STATE);
+  var slideIndex = 0;
+  var currentChartRowsDraft = [];
+  var currentSlidesDraft = [];
+
+  function showToast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(function(){ toastEl.classList.remove('show'); }, 2800);
+  }
+
+  /* ---------------- Apply helpers (write appState into the live scene) ---------------- */
+  function applyModel(url, scale){
+    modelEl.setAttribute('gltf-model', url);
+    modelEl.setAttribute('scale', scale + ' ' + scale + ' ' + scale);
+  }
+  function applyVideo(url){
+    try { demoVideo.pause(); } catch(e){}
+    demoVideo.src = url;
+    demoVideo.load();
+  }
+
+  var chartInstance = null;
+  Chart.register({
+    id: 'bgFill',
+    beforeDraw: function (chart) {
+      var c = chart.ctx, w = chart.width, h = chart.height;
+      c.save(); c.fillStyle = '#161625'; c.fillRect(0,0,w,h); c.restore();
+    }
+  });
+  var CHART_PALETTE = ['#6C5CE7','#00CEC9','#00B894','#0984E3','#E17055','#FDCB6E','#D63031','#A29BFE'];
+  function buildChart(title, rows){
+    var canvas = document.getElementById('chartCanvas');
+    var ctx = canvas.getContext('2d');
+    if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
+    var labels = rows.map(function(r){ return r.label; });
+    var data = rows.map(function(r){ return Number(r.value) || 0; });
+    var colors = rows.map(function(_, i){ return CHART_PALETTE[i % CHART_PALETTE.length]; });
+    chartInstance = new Chart(ctx, {
       type: 'bar',
-      data: {
-        labels: ['Q1','Q2','Q3','Q4'],
-        datasets: [{
-          label: 'ยอดขาย (ตัวอย่าง)',
-          data: [12,19,14,27],
-          backgroundColor: ['#6C5CE7','#00CEC9','#00B894','#0984E3'],
-          borderRadius: 10
-        }]
-      },
+      data: { labels: labels, datasets: [{ label: title, data: data, backgroundColor: colors, borderRadius: 10 }] },
       options: {
         responsive: false,
         animation: false,
         plugins: {
           legend: { labels: { color:'#fff', font:{ size:22 } } },
-          title: { display:true, text:'ตัวอย่างกราฟยอดขาย', color:'#fff', font:{ size:30 } }
+          title: { display:true, text:title, color:'#fff', font:{ size:28 } }
         },
         scales: {
           x: { ticks:{ color:'#fff', font:{ size:20 } }, grid:{ color:'rgba(255,255,255,0.08)' } },
@@ -427,37 +617,38 @@
       }
     });
     requestAnimationFrame(function(){
-      document.getElementById('chartPlane').setAttribute('material', 'src', '#chartCanvas');
+      var plane = document.getElementById('chartPlane');
+      plane.setAttribute('material', 'src', '#chartCanvas');
+      if (plane.components.material && plane.components.material.material.map) {
+        plane.components.material.material.map.needsUpdate = true;
+      }
     });
   }
 
-  /* ---------------- Slides (attach a slideshow) ---------------- */
-  var slides = [
-    { title:'สไลด์ 1', subtitle:'ภาพรวมโครงการ AR', colors:['#6C5CE7','#00CEC9'] },
-    { title:'สไลด์ 2', subtitle:'จุดเด่นและฟีเจอร์', colors:['#00B894','#0984E3'] },
-    { title:'สไลด์ 3', subtitle:'ขอบคุณที่รับชม', colors:['#E17055','#D63031'] }
-  ];
-  var slideIndex = 0;
   function drawSlide(i){
-    var canvas = document.getElementById('slideCanvas');
-    var ctx = canvas.getContext('2d');
-    var s = slides[i];
-    var grad = ctx.createLinearGradient(0,0,canvas.width,canvas.height);
-    grad.addColorStop(0, s.colors[0]);
-    grad.addColorStop(1, s.colors[1]);
-    ctx.fillStyle = grad;
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle = 'rgba(255,255,255,0.97)';
-    ctx.textAlign = 'center';
-    ctx.font = 'bold 60px Kanit, sans-serif';
-    ctx.fillText(s.title, canvas.width/2, canvas.height/2 - 10);
-    ctx.font = '32px Kanit, sans-serif';
-    ctx.fillText(s.subtitle, canvas.width/2, canvas.height/2 + 50);
-    ctx.font = '24px Kanit, sans-serif';
-    ctx.fillText((i+1) + ' / ' + slides.length, canvas.width/2, canvas.height - 30);
-
+    var s = appState.slides[i];
     var plane = document.getElementById('slidePlane');
-    plane.setAttribute('material', 'src', '#slideCanvas');
+    if (!s) return;
+    if (s.type === 'image') {
+      plane.setAttribute('material', 'src', s.url);
+    } else {
+      var canvas = document.getElementById('slideCanvas');
+      var ctx = canvas.getContext('2d');
+      var grad = ctx.createLinearGradient(0,0,canvas.width,canvas.height);
+      grad.addColorStop(0, s.colors[0]);
+      grad.addColorStop(1, s.colors[1]);
+      ctx.fillStyle = grad;
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+      ctx.fillStyle = 'rgba(255,255,255,0.97)';
+      ctx.textAlign = 'center';
+      ctx.font = 'bold 60px Kanit, sans-serif';
+      ctx.fillText(s.title, canvas.width/2, canvas.height/2 - 10);
+      ctx.font = '32px Kanit, sans-serif';
+      ctx.fillText(s.subtitle || '', canvas.width/2, canvas.height/2 + 50);
+      ctx.font = '24px Kanit, sans-serif';
+      ctx.fillText((i+1) + ' / ' + appState.slides.length, canvas.width/2, canvas.height - 30);
+      plane.setAttribute('material', 'src', '#slideCanvas');
+    }
     if (plane.components.material && plane.components.material.material.map) {
       plane.components.material.material.map.needsUpdate = true;
     }
@@ -487,17 +678,20 @@
   });
 
   slideBtn.addEventListener('click', function(){
+    if (!appState.slides.length) { showToast('ยังไม่มีสไลด์ — เพิ่มได้ในหน้าตั้งค่า ⚙️'); return; }
     var showing = slidePanel.getAttribute('visible');
     if (!showing) { drawSlide(slideIndex); }
     setPanelVisible(slidePanel, slideBtn, !showing);
   });
   slidePrevBtn.addEventListener('click', function(){
-    slideIndex = (slideIndex - 1 + slides.length) % slides.length;
+    if (!appState.slides.length) return;
+    slideIndex = (slideIndex - 1 + appState.slides.length) % appState.slides.length;
     drawSlide(slideIndex);
     setPanelVisible(slidePanel, slideBtn, true);
   });
   slideNextBtn.addEventListener('click', function(){
-    slideIndex = (slideIndex + 1) % slides.length;
+    if (!appState.slides.length) return;
+    slideIndex = (slideIndex + 1) % appState.slides.length;
     drawSlide(slideIndex);
     setPanelVisible(slidePanel, slideBtn, true);
   });
@@ -623,9 +817,241 @@
     modelPlaced = true;
   });
 
-  /* ---------------- Feature detection ---------------- */
+  /* ================= Settings panel (edit from the front end) ================= */
+
+  function fileToDataURL(file){
+    return new Promise(function(resolve, reject){
+      var reader = new FileReader();
+      reader.onload = function(){ resolve(reader.result); };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function renderChartRows(){
+    chartRowsContainer.innerHTML = '';
+    currentChartRowsDraft.forEach(function(row, idx){
+      var rowEl = document.createElement('div');
+      rowEl.className = 'form-row';
+
+      var labelInput = document.createElement('input');
+      labelInput.type = 'text'; labelInput.className = 'field small';
+      labelInput.value = row.label; labelInput.placeholder = 'ชื่อแท่ง เช่น Q1';
+      labelInput.addEventListener('input', function(){ currentChartRowsDraft[idx].label = labelInput.value; });
+
+      var valueInput = document.createElement('input');
+      valueInput.type = 'number'; valueInput.className = 'field small';
+      valueInput.value = row.value;
+      valueInput.addEventListener('input', function(){ currentChartRowsDraft[idx].value = valueInput.value; });
+
+      var delBtn = document.createElement('button');
+      delBtn.type = 'button'; delBtn.className = 'chip-del'; delBtn.textContent = '✕';
+      delBtn.addEventListener('click', function(){ currentChartRowsDraft.splice(idx,1); renderChartRows(); });
+
+      rowEl.appendChild(labelInput); rowEl.appendChild(valueInput); rowEl.appendChild(delBtn);
+      chartRowsContainer.appendChild(rowEl);
+    });
+  }
+  addChartRowBtn.addEventListener('click', function(){
+    currentChartRowsDraft.push({ label:'แท่งใหม่', value:10 });
+    renderChartRows();
+  });
+
+  var SLIDE_PALETTE = [['#6C5CE7','#00CEC9'],['#00B894','#0984E3'],['#E17055','#D63031'],['#FDCB6E','#E17055'],['#0984E3','#6C5CE7']];
+
+  function renderSlideList(){
+    slideListContainer.innerHTML = '';
+    currentSlidesDraft.forEach(function(s, idx){
+      var card = document.createElement('div');
+      card.className = 'slide-card';
+      if (s.type === 'image') {
+        var img = document.createElement('img');
+        img.src = s.url;
+        card.appendChild(img);
+      } else {
+        var box = document.createElement('div');
+        box.className = 'slide-card-text';
+        box.style.background = 'linear-gradient(135deg,' + s.colors[0] + ',' + s.colors[1] + ')';
+        box.textContent = s.title;
+        card.appendChild(box);
+      }
+      var delBtn = document.createElement('button');
+      delBtn.type = 'button'; delBtn.className = 'chip-del small'; delBtn.textContent = '✕';
+      delBtn.addEventListener('click', function(){ currentSlidesDraft.splice(idx,1); renderSlideList(); });
+      card.appendChild(delBtn);
+      slideListContainer.appendChild(card);
+    });
+    if (!currentSlidesDraft.length) {
+      var empty = document.createElement('div');
+      empty.className = 'hint';
+      empty.textContent = 'ยังไม่มีสไลด์ — เพิ่มรูปภาพหรือสไลด์ข้อความด้านล่าง';
+      slideListContainer.appendChild(empty);
+    }
+  }
+
+  slideImagesInput.addEventListener('change', function(){
+    var files = Array.prototype.slice.call(slideImagesInput.files);
+    files.forEach(function(file){
+      var reader = new FileReader();
+      reader.onload = function(){
+        currentSlidesDraft.push({ type:'image', url: reader.result });
+        renderSlideList();
+      };
+      reader.readAsDataURL(file);
+    });
+    slideImagesInput.value = '';
+  });
+
+  addTextSlideBtn.addEventListener('click', function(){
+    var title = newSlideTitleInput.value.trim();
+    var subtitle = newSlideSubtitleInput.value.trim();
+    if (!title) { showToast('กรอกหัวข้อสไลด์ก่อนนะ'); return; }
+    var colors = SLIDE_PALETTE[currentSlidesDraft.length % SLIDE_PALETTE.length];
+    currentSlidesDraft.push({ type:'text', title:title, subtitle:subtitle, colors:colors });
+    newSlideTitleInput.value = ''; newSlideSubtitleInput.value = '';
+    renderSlideList();
+  });
+
+  function openSettings(){
+    modelUrlInput.value = (appState.modelUrl.indexOf('data:') === 0 || appState.modelUrl.indexOf('blob:') === 0) ? '' : appState.modelUrl;
+    modelFileInput.value = '';
+    modelScaleInput.value = appState.modelScale;
+    videoUrlInput.value = (appState.videoUrl.indexOf('data:') === 0 || appState.videoUrl.indexOf('blob:') === 0) ? '' : appState.videoUrl;
+    videoFileInput.value = '';
+    chartTitleInput.value = appState.chartTitle;
+    currentChartRowsDraft = cloneState(appState.chartData);
+    renderChartRows();
+    currentSlidesDraft = cloneState(appState.slides);
+    renderSlideList();
+    newSlideTitleInput.value = '';
+    newSlideSubtitleInput.value = '';
+    settingsModal.style.display = 'flex';
+  }
+  function closeSettings(){ settingsModal.style.display = 'none'; }
+
+  settingsBtn.addEventListener('click', openSettings);
+  closeSettingsBtn.addEventListener('click', closeSettings);
+
+  async function persistState(state){
+    var storable = {
+      modelUrl: null, modelScale: state.modelScale,
+      videoUrl: null,
+      chartTitle: state.chartTitle, chartData: state.chartData,
+      slides: state.slides
+    };
+    if (state._modelFileForPersist) {
+      try {
+        var durl = await fileToDataURL(state._modelFileForPersist);
+        if (durl.length < 3500000) storable.modelUrl = durl;
+      } catch(e){}
+    } else if (state.modelUrl && state.modelUrl.indexOf('blob:') !== 0) {
+      storable.modelUrl = state.modelUrl;
+    }
+    if (state._videoFileForPersist) {
+      try {
+        var vurl = await fileToDataURL(state._videoFileForPersist);
+        if (vurl.length < 3500000) storable.videoUrl = vurl;
+      } catch(e){}
+    } else if (state.videoUrl && state.videoUrl.indexOf('blob:') !== 0) {
+      storable.videoUrl = state.videoUrl;
+    }
+    try {
+      var json = JSON.stringify(storable);
+      if (json.length < 4700000) {
+        localStorage.setItem(STORAGE_KEY, json);
+      } else {
+        showToast('ℹ️ ใช้งานแล้ว แต่ไฟล์ใหญ่เกินจะจำไว้ในเครื่องนี้ (ต้องตั้งค่าใหม่ครั้งหน้า)');
+      }
+    } catch(e) {
+      showToast('ℹ️ ใช้งานแล้ว แต่บันทึกลงเครื่องไม่สำเร็จ');
+    }
+  }
+
+  saveSettingsBtn.addEventListener('click', async function(){
+    saveSettingsBtn.disabled = true;
+    var oldLabel = saveSettingsBtn.textContent;
+    saveSettingsBtn.textContent = 'กำลังบันทึก...';
+    try {
+      var newState = cloneState(appState);
+
+      var modelFile = modelFileInput.files[0];
+      if (modelFile) {
+        newState.modelUrl = URL.createObjectURL(modelFile);
+        newState._modelFileForPersist = modelFile;
+      } else if (modelUrlInput.value.trim()) {
+        newState.modelUrl = modelUrlInput.value.trim();
+        newState._modelFileForPersist = null;
+      }
+      newState.modelScale = parseFloat(modelScaleInput.value) || appState.modelScale;
+
+      var videoFile = videoFileInput.files[0];
+      if (videoFile) {
+        newState.videoUrl = URL.createObjectURL(videoFile);
+        newState._videoFileForPersist = videoFile;
+      } else if (videoUrlInput.value.trim()) {
+        newState.videoUrl = videoUrlInput.value.trim();
+        newState._videoFileForPersist = null;
+      }
+
+      newState.chartTitle = chartTitleInput.value.trim() || 'กราฟตัวอย่าง';
+      newState.chartData = currentChartRowsDraft.filter(function(r){ return r.label && r.label.trim(); });
+      if (!newState.chartData.length) newState.chartData = cloneState(DEFAULT_STATE.chartData);
+
+      newState.slides = currentSlidesDraft;
+
+      applyModel(newState.modelUrl, newState.modelScale);
+      applyVideo(newState.videoUrl);
+      buildChart(newState.chartTitle, newState.chartData);
+      appState = newState;
+      slideIndex = 0;
+      if (appState.slides.length) drawSlide(0);
+
+      await persistState(newState);
+
+      closeSettings();
+      showToast('✅ บันทึกและใช้งานแล้ว');
+    } catch (e) {
+      showToast('⚠️ เกิดข้อผิดพลาด: ' + e.message);
+    } finally {
+      saveSettingsBtn.disabled = false;
+      saveSettingsBtn.textContent = oldLabel;
+    }
+  });
+
+  resetSettingsBtn.addEventListener('click', function(){
+    localStorage.removeItem(STORAGE_KEY);
+    appState = cloneState(DEFAULT_STATE);
+    applyModel(appState.modelUrl, appState.modelScale);
+    applyVideo(appState.videoUrl);
+    buildChart(appState.chartTitle, appState.chartData);
+    slideIndex = 0;
+    drawSlide(0);
+    closeSettings();
+    showToast('↩️ กลับเป็นค่าเริ่มต้นแล้ว');
+  });
+
+  function loadSavedSettings(){
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      var saved = JSON.parse(raw);
+      if (saved.modelUrl) appState.modelUrl = saved.modelUrl;
+      if (saved.modelScale) appState.modelScale = saved.modelScale;
+      if (saved.videoUrl) appState.videoUrl = saved.videoUrl;
+      if (saved.chartTitle) appState.chartTitle = saved.chartTitle;
+      if (saved.chartData && saved.chartData.length) appState.chartData = saved.chartData;
+      if (saved.slides && saved.slides.length) appState.slides = saved.slides;
+    } catch(e){}
+  }
+
+  /* ---------------- Boot ---------------- */
   window.addEventListener('load', function(){
-    buildChart();
+    loadSavedSettings();
+    applyModel(appState.modelUrl, appState.modelScale);
+    applyVideo(appState.videoUrl);
+    buildChart(appState.chartTitle, appState.chartData);
+    if (appState.slides.length) drawSlide(0);
+
     if (navigator.xr && navigator.xr.isSessionSupported) {
       navigator.xr.isSessionSupported('immersive-ar').then(function(supported){
         if (!supported) {
